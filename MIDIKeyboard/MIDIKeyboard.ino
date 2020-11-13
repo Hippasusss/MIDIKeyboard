@@ -7,7 +7,7 @@ const byte CHANNEL = 1;
 const byte OFFSET = 9+24;
 const byte SUSTAINCC = 64;
 
-const byte SustainPins = {20, 21}
+const byte sustainPins[2] = {20, 21};
 const byte inputPins[NUMI]    = {22, 24, 26, 28, 30, 41, 43, 45, 47, 49, 51};
 const byte inputPinsVel[NUMI] = {23, 25, 27, 29, 31, 40, 42, 44, 46, 48, 50};
 const byte outputPins[NUMO]   = {32, 33, 34, 35, 36, 37, 38, 39};
@@ -33,8 +33,8 @@ void setup()
     }
 
     //Sustain Pins
-    pinMode(SustainPins[0], INPUT_PULLUP);
-    pinMode(SustainPins[1], OUTPUT);
+    pinMode(sustainPins[0], INPUT_PULLUP);
+    pinMode(sustainPins[1], OUTPUT);
     
     Serial.begin(9600);
 }
@@ -131,7 +131,7 @@ void sendMIDI()
     if (sustainOn != sustainOnPrev)
     {
       sendControlChange(1, SUSTAINCC, sustainOn * 120);
-      sustainOnPrev = sustainOn);
+      sustainOnPrev = sustainOn;
     }
     
     MidiUSB.flush();
