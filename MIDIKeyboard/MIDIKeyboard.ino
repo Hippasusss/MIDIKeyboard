@@ -1,13 +1,13 @@
 #include <MIDIUSB.h>
 
-const byte NUMK    = 88;
-const byte NUMI    = 11;
-const byte NUMO    = 8;
-const byte CHANNEL = 1;
-const byte OFFSET = 9+24;
-const byte SUSTAINCC = 64;
+const byte NUMK       = 88;
+const byte NUMI       = 11;
+const byte NUMO       = 8;
+const byte CHANNEL    = 1;
+const byte OFFSET     = 9 + 12;
+const byte SUSTAINCC  = 64;
 
-const byte sustainPins[2] = {20, 21};
+const byte sustainPins[2]     = {20, 21};
 const byte inputPins[NUMI]    = {22, 24, 26, 28, 30, 41, 43, 45, 47, 49, 51};
 const byte inputPinsVel[NUMI] = {23, 25, 27, 29, 31, 40, 42, 44, 46, 48, 50};
 const byte outputPins[NUMO]   = {32, 33, 34, 35, 36, 37, 38, 39};
@@ -36,8 +36,6 @@ void setup()
     pinMode(sustainPins[0], INPUT_PULLUP);
     pinMode(sustainPins[1], OUTPUT);
     digitalWrite(sustainPins[1], LOW);
-    
-    //Serial.begin(9600);
 }
 
 void loop()
@@ -52,41 +50,41 @@ void updateNoteArray()
 {
     for (byte i = 0; i < NUMO; ++i)
     {
-        digitalWrite(outputPins[i], LOW ); 
+        digitalWrite(outputPins[i], LOW );
 
-        for (byte j = 0; j < NUMI; ++j) 
+        for (byte j = 0; j < NUMI; ++j)
         {
-            byte currentNote = ((j + 1) * NUMO) - ((NUMO - 1) - i) - 1; 
+            byte currentNote = ((j + 1) * NUMO) - ((NUMO - 1) - i) - 1;
 
             //KEY START - key has began being pressed
-            if (digitalRead(inputPins[j]) == LOW) 
+            if (digitalRead(inputPins[j]) == LOW)
             {
-                if (noteTimer[currentNote] == 0) 
+                if (noteTimer[currentNote] == 0)
                 {
-                    noteTimer[currentNote] = micros();  
+                    noteTimer[currentNote] = micros();
                 }
             }
-            else 
+            else //read HIGH
             {
                 noteTimer[currentNote] = 0;
                 noteVel[currentNote] = 0;
+                noteOn[currentNote] = false;
             }
 
-            //KEY END - key has been full actuated
+            //KEY END - key has been fully actuated
             if (digitalRead(inputPinsVel[j]) == LOW)
             {
-                if (noteVel[currentNote] == 0)   
+                if (noteVel[currentNote] == 0)
                 {
                     noteVel[currentNote] = calcVel(micros() - noteTimer[currentNote]);
-                }  
+                }
                 if (noteOn[currentNote]  == false)
                 {
                     noteOn[currentNote] = true;
-                } 
+                }
             }
-            else
+            else //read HIGH
             {
-                noteOn[currentNote] = false;
             }
         }
 
@@ -96,12 +94,13 @@ void updateNoteArray()
 
 void updateSustain()
 {
-  sustainOn = digitalRead(sustainPins[0]);
-  //Serial.print(sustainOn);
+    sustainOn = digitalRead(sustainPins[0]);
 }
 
 byte calcVel(unsigned long value)
 {
+
+    //TODO: refine velocity mapping
     value = constrain(value, 5000, 100000);
     value = map(value, 5000, 100000, 127, 1);
     return (byte)value;
@@ -124,31 +123,31 @@ void sendMIDI()
     //Send Sustain Data
     if (sustainOn != sustainOnPrev)
     {
-      byte value = sustainOn ? 0 : 127;
-      sendControlChange(CHANNEL, SUSTAINCC, value);
-      sustainOnPrev = sustainOn;
+        byte value = sustainOn ? 0 : 127;
+        sendControlChange(CHANNEL, SUSTAINCC, value);
+        sustainOnPrev = sustainOn;
     }
-   
+
 }
 
 void sendControlChange(byte channel, byte control, byte value) {
 
-  midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
+    midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
 
-  MidiUSB.sendMIDI(event);
-  MidiUSB.flush();
+    MidiUSB.sendMIDI(event);
+    MidiUSB.flush();
 }
 
-void sendNoteOn(byte channel, byte pitch, byte velocity) 
+void sendNoteOn(byte channel, byte pitch, byte velocity)
 {
-  midiEventPacket_t noteOn = {0x09, 0x90 | channel, pitch, velocity};
-  MidiUSB.sendMIDI(noteOn);
-  MidiUSB.flush();
+    midiEventPacket_t noteOn = {0x09, 0x90 | channel, pitch, velocity};
+    MidiUSB.sendMIDI(noteOn);
+    MidiUSB.flush();
 }
 
-void sendNoteOff(byte channel, byte pitch, byte velocity) 
+void sendNoteOff(byte channel, byte pitch, byte velocity)
 {
-  midiEventPacket_t noteOff = {0x08, 0x80 | channel, pitch, velocity};
-  MidiUSB.sendMIDI(noteOff);
-  MidiUSB.flush();
+    midiEventPacket_t noteOff = {0x08, 0x80 | channel, pitch, velocity};
+    MidiUSB.sendMIDI(noteOff);
+    MidiUSB.flush();
 }
