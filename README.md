@@ -8,7 +8,7 @@ To use this sketch you require:
 - A Broken Casio CDP130 Keyboard :(
 
 The casio scan matrix is accesible through the 30 pin FFC cable near the centre of the keybed's mother board. It uses pins 11-18 for input.
-It then uses pins 1-10 and 19-30 for output. Odd outputs are triggered when the key is first pressed. Even outputs are triggered when the key
+It then uses pins 1-10 and 19-30 for output. Odd outputs are switched open when the key is first pressed. Even outputs are switched open when the key
 is fully pressed. The time between these yields the velocity. 
 
 Hopefully this will save someone else the time spent reverse engineering this!
