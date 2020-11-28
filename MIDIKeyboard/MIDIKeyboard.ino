@@ -56,8 +56,10 @@ void updateNoteArray()
         {
             byte currentNote = ((j + 1) * NUMO) - ((NUMO - 1) - i) - 1;
 
+            const byte inRead = digitalRead(inputPins[j]);
+            const byte inReadVel = digitalRead(inputPinsVel[j]);
             //KEY START - key has began being pressed
-            if (digitalRead(inputPins[j]) == LOW)
+            if (inRead == LOW)
             {
                 if (noteTimer[currentNote] == 0)
                 {
@@ -72,7 +74,7 @@ void updateNoteArray()
             }
 
             //KEY END - key has been fully actuated
-            if (digitalRead(inputPinsVel[j]) == LOW)
+            if (inReadVel == LOW)
             {
                 if (noteVel[currentNote] == 0)
                 {
@@ -100,9 +102,18 @@ void updateSustain()
 byte calcVel(unsigned long value)
 {
 
-    //TODO: refine velocity mapping
-    value = constrain(value, 5000, 100000);
-    value = map(value, 5000, 100000, 127, 1);
+    const int VelocityFastMs = 5000;
+    const int VelocitySlowMs = 50000;
+    const float vPower = 0.5f;
+
+
+    value = constrain(value, VelocityFastMs, VelocitySlowMs );
+    value = (pow((value - VelocityFastMs), vPower) / pow( VelocitySlowMs - VelocityFastMs, vPower)) * VelocitySlowMs + VelocityFastMs;
+    value = constrain(value, VelocityFastMs, VelocitySlowMs ); 
+    // Double contrain is there on purpose to get the exponent to behave itself at extreme values
+
+    value = map(value, VelocityFastMs, VelocitySlowMs, 127, 1);
+
     return (byte)value;
 }
 
@@ -133,7 +144,6 @@ void sendMIDI()
 void sendControlChange(byte channel, byte control, byte value) {
 
     midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
-
     MidiUSB.sendMIDI(event);
     MidiUSB.flush();
 }
