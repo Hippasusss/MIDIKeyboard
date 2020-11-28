@@ -1,5 +1,5 @@
 # MIDIKeyboard
-A new arduino MIDI controller for the Casio cdp130 (and potentialy other casio models?). 
+A new arduino MIDI controller for the Casio cdp130 keybed (and potentialy other scan matrix based velocity sensitive keybaords). 
 
 To use this sketch you require:
 - [Arduino Due (for native USB support and lots of digital IO)](https://smile.amazon.co.uk/Arduino-A000062-Due-Microcontroller/dp/B00A6C3JN2/ref=sr_1_3?keywords=arduino+due&qid=1584032351&sr=8-3)
@@ -12,3 +12,8 @@ It then uses pins 1-10 and 19-30 for output. Odd outputs are triggered when the 
 is fully pressed. The time between these yields the velocity. 
 
 Hopefully this will save someone else the time spent reverse engineering this!
+
+Looks pretty smart when you're done:
+
+![IMG_3679](https://user-images.githubusercontent.com/8618294/100522854-d6511380-31a3-11eb-9b38-7a63d9348d85.jpg)
+
