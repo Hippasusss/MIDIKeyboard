@@ -1,5 +1,5 @@
 # MIDIKeyboard
-A new arduino MIDI controller for the Casio cdp130 keybed (and potentialy other scan matrix based velocity sensitive keybaords). 
+A new arduino MIDI controller for the Casio cdp130 keybed (and potentialy other scan matrix based velocity sensitive keyboards). 
 
 To use this sketch you require:
 - [Arduino Due (for native USB support and lots of digital IO)](https://smile.amazon.co.uk/Arduino-A000062-Due-Microcontroller/dp/B00A6C3JN2/ref=sr_1_3?keywords=arduino+due&qid=1584032351&sr=8-3)
