@@ -87,6 +87,9 @@ void updateNoteArray()
             }
             else //read HIGH
             {
+                noteTimer[currentNote] = 0;
+                noteVel[currentNote] = 0;
+                noteOn[currentNote] = false;
             }
         }
 
@@ -128,6 +131,9 @@ void sendMIDI()
             if (noteOn[i] == true) sendNoteOn (CHANNEL, note, noteVel[i]);
             else                   sendNoteOff(CHANNEL, note, 0);
             noteOnPrev[i] = noteOn[i];
+            // BREAK NEEDED: stops bug where notes hang. possibly bug in midiusb library. 
+            // ensures that notes are sent in seperate loops
+            break;
         }
     }
 
@@ -139,25 +145,24 @@ void sendMIDI()
         sustainOnPrev = sustainOn;
     }
 
+    MidiUSB.flush();
+
 }
 
 void sendControlChange(byte channel, byte control, byte value) {
 
     midiEventPacket_t event = {0x0B, 0xB0 | channel, control, value};
     MidiUSB.sendMIDI(event);
-    MidiUSB.flush();
 }
 
 void sendNoteOn(byte channel, byte pitch, byte velocity)
 {
     midiEventPacket_t noteOn = {0x09, 0x90 | channel, pitch, velocity};
     MidiUSB.sendMIDI(noteOn);
-    MidiUSB.flush();
 }
 
 void sendNoteOff(byte channel, byte pitch, byte velocity)
 {
     midiEventPacket_t noteOff = {0x08, 0x80 | channel, pitch, velocity};
     MidiUSB.sendMIDI(noteOff);
-    MidiUSB.flush();
 }
