@@ -87,11 +87,10 @@ void updateNoteArray()
             }
             else //read HIGH
             {
-                noteTimer[currentNote] = 0;
-                noteVel[currentNote] = 0;
-                noteOn[currentNote] = false;
+                
             }
         }
+
 
         digitalWrite(outputPins[i], HIGH);
     }
